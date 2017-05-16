@@ -24,9 +24,11 @@ app.scrape = function(page) {
 		date = episode_tags[1].innerText;
 		setlist = episode_tags[2].innerText;
 	  download = $('a.download_link',episode_tags).attr('href');
-		if(!download || download.typeof === 'undefined' ){
-			// download = $('p:nth-child(3) > a',episode_tags).attr('href');
+		if(!download || download.typeof === 'undefined' ){;
 			download = $("a[title='MP3 Download']",episode_tags).attr('href');
+			if (!download || download.typeof === 'undefined' ){
+				download = $('div.aplayer-panel', episode_tags).attr('data-uri');
+			}
 		} 
 
 		item = {
@@ -37,7 +39,6 @@ app.scrape = function(page) {
 		};
 		data.push(item);
 	}
-	app.validates(data);
 }
 
 app.validates = function(data){
@@ -56,13 +57,21 @@ app.validates = function(data){
 		} else {
 			console.log('OK!');
 		}
-		
 	});
 }	
 
-//Doing this way you polute the global scope
-// do_request = function(page){
-// 	var xhr = new XmlHttpRequest();
-// 	xhr.open("get", "./get.php?page={$page}");
-// 	xrh.send;
-// }
+app.post_data = function(data){
+	data.forEach(function(episode){
+		$.ajax('http://localhost/lib/post.php',{
+			type: 'post',
+			dataType: 'json',
+			success: function(){
+				console.log('JSON POSTed to php!');
+			},
+			error: function(){
+				console.log('Could not POST to php');
+			},
+			data: episode,
+		});
+	});
+}
