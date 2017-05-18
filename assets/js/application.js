@@ -61,7 +61,8 @@ app.validates = function(data){
 }	
 
 app.post_data = function(data){
-	data.forEach(function(episode){
+	//data.forEach(function(episode){
+		episode = data[0];
 		$.ajax('http://localhost/lib/post.php',{
 			type: 'post',
 			dataType: 'json',
@@ -69,9 +70,9 @@ app.post_data = function(data){
 				console.log('JSON POSTed to php!');
 			},
 			error: function(){
-				console.log('Could not POST to php');
+				debugger;
 			},
 			data: episode,
 		});
-	});
+	//});
 }
