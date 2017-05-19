@@ -33,10 +33,11 @@ $pass = 'noclip';
 $database = 'ntasd';
 
 $conn = db_setup($host, $user, $pass, $database);
-
+$data = $_POST;
 //	CHECK IF TABLES EXIST
 if(tb_exists($conn,'Pages')){
-	echo('Pages exists');
+	// echo('Pages exists');
+	// echo("\n");
 } 
 else {
 	$pages_create = 
@@ -48,7 +49,8 @@ else {
 }
 
 if(tb_exists($conn,'Episodes')){
-	echo('Episodes exist!');
+	// echo('Episodes exist!');
+	// echo("\n");
 } 
 else {
 	$create = 
@@ -65,7 +67,13 @@ else {
   mysqli_query($conn, $create);
   echo(mysqli_error($conn));
 }
-//var_dump($_POST);
+
+$page_num = $_POST["page_num"];
+$episodes =$_POST["data"];
+
+foreach($episodes as $ep){
+	
+}
 
 
 

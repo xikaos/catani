@@ -61,18 +61,18 @@ app.validates = function(data){
 }	
 
 app.post_data = function(data){
-	//data.forEach(function(episode){
-		episode = data[0];
 		$.ajax('http://localhost/lib/post.php',{
 			type: 'post',
 			dataType: 'json',
+			data: {
+				"page_num": page_num,
+				"data": data,
+			},
 			success: function(){
 				console.log('JSON POSTed to php!');
 			},
-			error: function(){
-				debugger;
+			error: function(ts){
+				console.log(ts.responseText);
 			},
-			data: episode,
 		});
-	//});
 }
