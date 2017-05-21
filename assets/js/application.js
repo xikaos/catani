@@ -65,6 +65,7 @@ app.post_data = function(data){
 			type: 'post',
 			dataType: 'json',
 			data: {
+				//"page_num": page_num,
 				"page_num": page_num,
 				"data": data,
 			},

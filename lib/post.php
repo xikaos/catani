@@ -42,7 +42,7 @@ if(tb_exists($conn,'Pages')){
 else {
 	$pages_create = 
 		"CREATE TABLE Pages (
-			page_id INT NOT NULL,
+			page_id SMALLINT NOT NULL,
 			PRIMARY KEY (page_id));";
 	mysqli_query($conn, $pages_create);
 	echo(mysqli_error($conn));
@@ -55,12 +55,12 @@ if(tb_exists($conn,'Episodes')){
 else {
 	$create = 
 		"CREATE TABLE Episodes (
-		id INT NOT NULL,
-		page_id INT NOT NULL,
+		id VARCHAR(45) NOT NULL,
+		page_id SMALLINT NOT NULL,
 		date VARCHAR(45) NULL,
-		download VARCHAR(45) NULL,
-		setlist VARCHAR(45) NULL,
-		title VARCHAR(45) NULL,
+		download VARCHAR(120) NULL,
+		setlist VARCHAR(750) NULL,
+		title VARCHAR(120) NULL,
 		mp3 BLOB NULL,
 		PRIMARY KEY (id),
 		FOREIGN KEY (page_id) REFERENCES Pages(page_id));";
@@ -68,12 +68,37 @@ else {
   echo(mysqli_error($conn));
 }
 
+
+// THIS IS ~ FUCKING ~ UNSANITIZED INPUT 
 $page_num = $_POST["page_num"];
 $episodes =$_POST["data"];
+// DON'T FUCKING PASS IT DIRECTLY TO MYSQLI_QUERY
+// WITHOUT FUCKING SANITIZATION: mysqli_real_escape_string
+
+
+$create_page = "INSERT INTO Pages (page_id)
+								VALUES ('{$page_num}');";
+
+mysqli_query($conn, $create_page);
+echo(mysqli_error($conn));
 
 foreach($episodes as $ep){
-	
+	$ep_id = hash('sha1', $ep["title"]);
+	$date = utf8_encode($ep["date"]);
+	$download = $ep["download"];
+	$setlist = mysqli_real_escape_string($conn,$ep["setlist"]);
+	$title = $ep["title"];
+	$create_episode = 
+		"INSERT INTO Episodes (id, page_id, date, download, setlist, title) VALUES ('{$ep_id}', '{$page_num}', '{$date}', '{$download}', '{$setlist}' , '{$title}');
+		";
+	mysqli_query($conn, $create_episode);
+	echo(mysqli_error($conn));
 }
+
+//echo($create_page);
+// foreach($episodes as $ep){
+
+// }
 
 
 
