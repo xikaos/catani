@@ -24,13 +24,30 @@ app.scrape = function(page) {
 		date = episode_tags[1].innerText;
 		setlist = episode_tags[2].innerText;
 	  download = $('a.download_link',episode_tags).attr('href');
-		if(!download || download.typeof === 'undefined' ){;
+		if(!download || download.typeof === 'undefined' ){
 			download = $("a[title='MP3 Download']",episode_tags).attr('href');
 			if (!download || download.typeof === 'undefined' ){
 				download = $('div.aplayer-panel', episode_tags).attr('data-uri');
 			}
 		} 
+		select = [];
+		split = setlist.split(/\w+(\s)*\w+\s[1,2].*/);
+		select = [];
+		splaft = [];
+		//Divide setlist parts
+		for(var i=0; i < split.length; i++){
+			if(split[i] != null && split[i].length > 10){
+				select.push(split[i].split(/\n/).filter(function(p){
+					return p.match(/\w.*\s-\s\w.*/);
+				}));
+			};
+		};
 
+		setlist = {
+			"Part 1": select[0].filter(function(n){ return n.match(/\w.*\s-\s\w.*/g) }),
+			"Part 2": select[1].filter(function(n){ return n.match(/\w.*\s-\s\w.*/g) }),
+		}
+		
 		item = {
 			"title": title,
 			"date": date,
@@ -65,7 +82,6 @@ app.post_data = function(data){
 			type: 'post',
 			dataType: 'json',
 			data: {
-				//"page_num": page_num,
 				"page_num": page_num,
 				"data": data,
 			},
@@ -76,4 +92,20 @@ app.post_data = function(data){
 				console.log(ts.responseText);
 			},
 		});
+}
+
+app.download = function(page_num){
+	$.ajax('http://localhost/lib/download.php',{
+		type: 'post',
+		dataType: 'json',
+		data: {
+			"page_num": page_num,
+		},
+		success: function(){
+			console.log('JSON POSTed to php!');
+		},
+		error: function(ts){
+			console.log(ts.responseText);
+		},
+	});
 }
