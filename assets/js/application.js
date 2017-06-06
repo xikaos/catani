@@ -32,8 +32,6 @@ app.scrape = function(page) {
 		} 
 		select = [];
 		split = setlist.split(/\w+(\s)*\w+\s[1,2].*/);
-		select = [];
-		splaft = [];
 		//Divide setlist parts
 		for(var i=0; i < split.length; i++){
 			if(split[i] != null && split[i].length > 10){
@@ -42,16 +40,11 @@ app.scrape = function(page) {
 				}));
 			};
 		};
-
-		setlist = {
-			"Part 1": select[0].filter(function(n){ return n.match(/\w.*\s-\s\w.*/g) }),
-			"Part 2": select[1].filter(function(n){ return n.match(/\w.*\s-\s\w.*/g) }),
-		}
 		
 		item = {
 			"title": title,
 			"date": date,
-			"setlist": setlist,
+			"setlist": select,
 			"download": download,  
 		};
 		data.push(item);
