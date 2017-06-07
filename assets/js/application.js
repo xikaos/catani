@@ -1,13 +1,28 @@
 //Create a root in the scope chain
 var app = app || {};
 
+app.setup = function(){
+	$('button.get_page_button').on("click", function(e){
+		app.do_request();
+	});
+
+	$('button.post_data').on("click", function(e){
+		app.post_data(data);
+	});
+
+	$('button.download').on("click", function(e){
+		app.download(page_num);
+	});
+}
+app.setup();
+
 app.do_request = function() {
 	page_num = $('#page_num').val();
 	url = "http://localhost/lib/get.php?page_num=".concat(page_num);
 	$.ajax(url, {
 		dataType: 'text',
-		success: function(page){
-			app.scrape(page);
+		success: function(string){
+			app.scrape(string);
 		}, 
 		error: function(){
 			console.log("Could not get " + url);
@@ -15,8 +30,9 @@ app.do_request = function() {
 	})
 }
 
-app.scrape = function(page) {
+app.scrape = function(html_string) {
 	data = [];
+	page = $($.parseHTML(html_string))
 	episodes = $('.post', page);
 	for(i = 0; i < episodes.length; i++){
 		episode_tags = episodes[i].children; 
@@ -30,16 +46,20 @@ app.scrape = function(page) {
 				download = $('div.aplayer-panel', episode_tags).attr('data-uri');
 			}
 		} 
+
 		select = [];
-		split = setlist.split(/\w+(\s)*\w+\s[1,2].*/);
+		split = setlist.split(/\w+\s?[12]\s?.*/).filter(function(e){
+			return e != null && e.length > 10
+		});
+		// split = setlist.split(/\w+(\s)*\w+\s[1,2].*/g).filter(function(e){
+		// 	return e != null && e.length > 10
+		// });
 		//Divide setlist parts
-		for(var i=0; i < split.length; i++){
-			if(split[i] != null && split[i].length > 10){
-				select.push(split[i].split(/\n/).filter(function(p){
-					return p.match(/\w.*\s-\s\w.*/);
-				}));
-			};
-		};
+		split.forEach(function(part){
+			select.push(part.split(/\n/).filter(function(element){
+				return element.match(/\w.*\s-\s\w.*/);
+			}));		
+		});
 		
 		item = {
 			"title": title,
