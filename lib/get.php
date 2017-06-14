@@ -6,6 +6,7 @@ curl_setopt($curl, CURLOPT_URL, "http://podcast.hernancattaneo.com/page/{$page_n
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, false);
 curl_setopt($curl,CURLOPT_HEADER, false); 
 
+//header("Content-Type: plain/text");
 $page = curl_exec($curl);
 
 if(!$page){
